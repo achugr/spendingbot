@@ -1,0 +1,63 @@
+group 'ru.achugr'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'spring-boot'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.0.RELEASE")
+    }
+}
+
+mainClassName = "ru.achugr.spendingbot.Application"
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+allprojects {
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+}
+
+dependencies {
+    compile 'com.github.rubenlagus:TelegramBots:v1.0'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.+'
+    compile "org.projectlombok:lombok:1.16.6"
+    compile 'org.springframework.boot:spring-boot-starter:1.3.2.RELEASE'
+    compile "org.springframework:spring-jdbc"
+    compile 'org.springframework:spring-jdbc:4.2.4.RELEASE'
+    compile 'org.postgresql:postgresql:9.4.1207.jre7'
+    compile "com.zaxxer:HikariCP:2.4.3"
+    compile "org.liquibase:liquibase-core:3.1.1"
+    compile 'org.hibernate:hibernate-validator:5.2.3.Final'
+    compile 'org.springframework:spring-test:4.2.4.RELEASE'
+    compile 'com.intellij:annotations:12.0'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+
+}
+
+task stage(type: Copy, dependsOn: [clean, build]) {
+    from jar.archivePath
+    into project.rootDir
+    rename {
+        'app.jar'
+    }
+}
+stage.mustRunAfter(clean)
+
+clean << {
+    project.file('app.jar').delete()
+}

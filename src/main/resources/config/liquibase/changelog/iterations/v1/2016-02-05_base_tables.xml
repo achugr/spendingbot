@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="2016-02-05_base_tables" author="achugr">
+        <sql>
+            <![CDATA[
+            CREATE TABLE t_money_transfer (
+                id BIGSERIAL PRIMARY KEY ,
+                session_id INT8,
+                user_id INT4,
+                operation_type VARCHAR(10),
+                sum NUMERIC(16,2)
+            );
+            ]]>
+        </sql>
+    </changeSet>
+    <changeSet id="2016-02-22" author="achugr">
+        <sql>
+            <![CDATA[
+            CREATE TABLE t_user (
+              id         INT4 PRIMARY KEY,
+              user_name  VARCHAR(30),
+              first_name VARCHAR(30),
+              last_name  VARCHAR(30)
+            );
+
+            ALTER TABLE t_money_transfer ADD CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES t_user (id);
+
+            CREATE TABLE t_session (
+              id             SERIAL8 PRIMARY KEY,
+              chat_id        INT8 NOT NULL,
+              session_number SERIAL4 NOT NULL,
+              session_name VARCHAR(50)
+            );
+
+            ALTER TABLE t_session ADD CONSTRAINT chat_id_session_number_unique UNIQUE (chat_id, session_number);
+            ALTER TABLE t_money_transfer ADD CONSTRAINT money_transfer_session_fk FOREIGN KEY (session_id) REFERENCES t_session(id);
+            ]]>
+        </sql>
+    </changeSet>
+</databaseChangeLog>
