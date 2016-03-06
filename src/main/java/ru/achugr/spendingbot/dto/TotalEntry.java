@@ -24,6 +24,10 @@ public class TotalEntry {
 
     @Override
     public String toString() {
-        return String.format("User %s should pay %s", userName, sum);
+        if (sum.compareTo(BigDecimal.ZERO) >= 0) {
+            return String.format("%s should get %s", userName, sum);
+        } else {
+            return String.format("%s should pay %s", userName, sum.abs());
+        }
     }
 }

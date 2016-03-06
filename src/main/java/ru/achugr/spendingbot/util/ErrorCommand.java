@@ -2,9 +2,8 @@ package ru.achugr.spendingbot.util;
 
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.omg.CORBA.portable.Streamable;
 
-import static ru.achugr.spendingbot.util.Command.CommandType.error;
+import static ru.achugr.spendingbot.util.Command.CommandType.ERROR;
 
 /**
  * author: achugr
@@ -16,7 +15,7 @@ public class ErrorCommand extends Command {
     private String message;
 
     public ErrorCommand(String message) {
-        super(error);
+        super(ERROR);
         this.message = message;
     }
 }

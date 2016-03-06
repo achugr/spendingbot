@@ -1,14 +1,9 @@
 package ru.achugr.spendingbot.util;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.validation.constraints.Null;
-
-import static ru.achugr.spendingbot.util.Command.CommandType.newSession;
+import static ru.achugr.spendingbot.util.Command.CommandType.NEW_SESSION;
 
 /**
  * author: achugr
@@ -22,11 +17,11 @@ public class NewSessionCommand extends Command {
     private String sessionName;
 
     public NewSessionCommand() {
-        super(newSession);
+        super(NEW_SESSION);
     }
 
     public NewSessionCommand(String sessionName) {
-        super(newSession);
+        super(NEW_SESSION);
         this.sessionName = sessionName;
     }
 }

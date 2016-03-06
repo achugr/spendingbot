@@ -1,6 +1,6 @@
 package ru.achugr.spendingbot.util;
 
-import static ru.achugr.spendingbot.util.Command.CommandType.total;
+import static ru.achugr.spendingbot.util.Command.CommandType.TOTAL;
 
 /**
  * author: achugr
@@ -9,6 +9,6 @@ import static ru.achugr.spendingbot.util.Command.CommandType.total;
 public class TotalCommand extends Command {
 
     public TotalCommand() {
-        super(total);
+        super(TOTAL);
     }
 }

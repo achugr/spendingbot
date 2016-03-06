@@ -3,7 +3,7 @@ package ru.achugr.spendingbot.util;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
-import static ru.achugr.spendingbot.util.Command.CommandType.unknown;
+import static ru.achugr.spendingbot.util.Command.CommandType.UNKNOWN;
 
 /**
  * author: achugr
@@ -15,7 +15,7 @@ public class UnknownCommand extends Command {
     private String message;
 
     public UnknownCommand(@NotNull String message) {
-        super(unknown);
+        super(UNKNOWN);
         this.message = message;
     }
 }

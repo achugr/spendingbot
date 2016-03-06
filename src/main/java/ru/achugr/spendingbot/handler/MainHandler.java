@@ -65,14 +65,14 @@ public class MainHandler extends TelegramLongPollingBot {
         Command command = commandParser.parse(message.getText());
         log.debug("Chat id: " + message.getChatId());
         switch (command.getCommand()) {
-            case paid:
+            case PAID:
                 return messageProcessingService.processPaidMessage((PaidCommand) command, message);
-            case total:
+            case TOTAL:
                 return messageProcessingService.processTotalMessage((TotalCommand) command, message);
-            case newSession:
+            case NEW_SESSION:
                 return messageProcessingService.processNewSessionMessage((NewSessionCommand) command, message);
-            case unknown:
-            case error:
+            case UNKNOWN:
+            case ERROR:
                 return messageProcessingService.replyWithText(message, ((UnknownCommand) command).getMessage());
             default:
                 return messageProcessingService.replyWithText(message, "Unknown command");

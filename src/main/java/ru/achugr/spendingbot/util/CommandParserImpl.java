@@ -1,5 +1,6 @@
 package ru.achugr.spendingbot.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import ru.achugr.spendingbot.exception.WrongCommandException;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
  * date: 14.02.16
  */
 @Component
+@Slf4j
 public class CommandParserImpl implements CommandParser {
 
     @NotNull
@@ -24,16 +26,19 @@ public class CommandParserImpl implements CommandParser {
     {
         cmdRegexp = Pattern.compile(String.format("/(%s)(.+)?",
                 Arrays.asList(Command.CommandType.values()).stream()
-                        .map(Command.CommandType::toString)
+                        .map(command -> command.getName().toLowerCase())
                         .collect(Collectors.joining("|"))));
     }
 
     public Command parse(@NotNull String commandStr) {
-        Matcher m = cmdRegexp.matcher(commandStr);
+        String preparedCommandStr = commandStr.toLowerCase();
+        Matcher m = cmdRegexp.matcher(preparedCommandStr);
         if (m.matches()) {
+            log.debug(String.format("String %s matches command regexp %s", preparedCommandStr, cmdRegexp.toString()));
             return buildCommand(m);
         } else {
-            throw new WrongCommandException(String.format("Can't parse command string %s", commandStr));
+            log.debug(String.format("String %s doesn't matches command regexp %s", preparedCommandStr, cmdRegexp.toString()));
+            throw new WrongCommandException(String.format("Can't parse command string %s", preparedCommandStr));
         }
     }
 
@@ -41,7 +46,9 @@ public class CommandParserImpl implements CommandParser {
         if (m.group(1) == null) {
             return new UnknownCommand("Command must be like '/commandName arg1 arg2 ...'");
         }
-        Command.CommandType commandType = Command.CommandType.valueOf(m.group(1));
+
+        Command.CommandType commandType = Command.getType(m.group(1));
+
         if (m.group(2) == null) {
             return buildNoArgsCommand(commandType);
         } else {
@@ -52,13 +59,13 @@ public class CommandParserImpl implements CommandParser {
     private Command buildCommand(@NotNull Matcher m, Command.CommandType commandType) {
         List<String> args = Arrays.asList(m.group(2).trim().split("\\s"));
         switch (commandType) {
-            case paid:
+            case PAID:
                 if (args.size() == 1) {
                     return new PaidCommand(new BigDecimal(args.get(0)));
                 } else {
                     return new ErrorCommand("Paid command should contain only one arg");
                 }
-            case newSession:
+            case NEW_SESSION:
                 if (args.size() == 1) {
                     return new NewSessionCommand(args.get(0));
                 } else {
@@ -76,8 +83,10 @@ public class CommandParserImpl implements CommandParser {
 
     private Command buildNoArgsCommand(Command.CommandType commandType) {
         switch (commandType) {
-            case total:
+            case TOTAL:
                 return new TotalCommand();
+            case NEW_SESSION:
+                return new NewSessionCommand();
             default:
                 return notImplemented();
         }
