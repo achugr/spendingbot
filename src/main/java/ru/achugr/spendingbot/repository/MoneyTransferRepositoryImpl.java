@@ -41,36 +41,42 @@ public class MoneyTransferRepositoryImpl implements MoneyTransferRepository {
         params.addValue("userId", moneyTransfer.getUserId());
         params.addValue("operationType", moneyTransfer.getOperationType().toString());
         params.addValue("sum", moneyTransfer.getSum());
-//        TODO create session if it's not exist in the same sql query
-        int updated = insertMoneyTransfer(params);
-        if (updated == 0) {
-            sessionRepository.createNew(moneyTransfer.getChatId(), "First session");
-            int updatedSnd = insertMoneyTransfer(params);
-            if (updatedSnd != 1) {
-                log.error("Can't save money transfer");
-            }
-        }
+        insertMoneyTransfer(params);
     }
 
-    private int insertMoneyTransfer(MapSqlParameterSource params) {
-        return jdbcTemplate.update(
+
+    private void insertMoneyTransfer(MapSqlParameterSource params) {
+        jdbcTemplate.update("" +
                 "WITH last_session_id AS (\n" +
-                        "    SELECT ts.id\n" +
-                        "    FROM t_session AS ts\n" +
-                        "    WHERE ts.chat_id = :chatId\n" +
-                        "    ORDER BY ts.session_number DESC\n" +
-                        "    LIMIT 1\n" +
-                        ")\n" +
-                        "INSERT INTO t_money_transfer (session_id, user_id, operation_type, sum)\n" +
-                        "  SELECT\n" +
-                        "    id,\n" +
-                        "    :userId,\n" +
-                        "    :operationType,\n" +
-                        "    :sum\n" +
-                        "  FROM last_session_id\n" +
-                        "  WHERE id IS NOT NULL\n",
-                params
-        );
+                "    SELECT ts.id\n" +
+                "    FROM t_session AS ts\n" +
+                "    WHERE ts.chat_id = :chatId\n" +
+                "    ORDER BY ts.session_number DESC\n" +
+                "    LIMIT 1\n" +
+                "),\n" +
+                "    create_session_if_needed AS (\n" +
+                "    INSERT INTO t_session (chat_id, session_number, session_name) SELECT\n" +
+                "                                                                    :chatId,\n" +
+                "                                                                    0,\n" +
+                "                                                                    'initial session'\n" +
+                "                                                                  WHERE NOT exists(SELECT *\n" +
+                "                                                                                   FROM last_session_id)\n" +
+                "    RETURNING id\n" +
+                "  )\n" +
+                "INSERT INTO t_money_transfer (session_id, user_id, operation_type, sum)\n" +
+                "  SELECT\n" +
+                "    id,\n" +
+                "    :userId,\n" +
+                "    :operationType,\n" +
+                "    :sum\n" +
+                "  FROM last_session_id\n" +
+                "  UNION ALL SELECT\n" +
+                "              id,\n" +
+                "              :userId,\n" +
+                "              :operationType,\n" +
+                "              :sum\n" +
+                "            FROM create_session_if_needed\n" +
+                "            WHERE id IS NOT NULL", params);
     }
 
     @Override
