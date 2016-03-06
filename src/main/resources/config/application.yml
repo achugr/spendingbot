@@ -1,0 +1,17 @@
+spring:
+    datasource:
+        username:
+        password:
+        driver: org.postgresql.Driver
+        dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
+        databaseName:
+        serverName:
+        maximumPoolSize: 10
+        url:
+
+telegram:
+  token:
+  botName:
+
+
+

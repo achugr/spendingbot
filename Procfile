@@ -1,1 +1,1 @@
-web: gradle run
+web: java $JAVA_OPTS -jar app.jar

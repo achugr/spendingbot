@@ -3,5 +3,4 @@
 build
 *.log
 *.iml
-*.jar
-application.yml
+application-achugr.yml
