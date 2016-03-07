@@ -72,8 +72,9 @@ public class MainHandler extends TelegramLongPollingBot {
             case NEW_SESSION:
                 return messageProcessingService.processNewSessionMessage((NewSessionCommand) command, message);
             case UNKNOWN:
-            case ERROR:
                 return messageProcessingService.replyWithText(message, ((UnknownCommand) command).getMessage());
+            case ERROR:
+                return messageProcessingService.replyWithText(message, ((ErrorCommand) command).getMessage());
             default:
                 return messageProcessingService.replyWithText(message, "Unknown command");
         }

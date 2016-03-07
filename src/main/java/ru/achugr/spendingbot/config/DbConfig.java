@@ -73,6 +73,8 @@ public class DbConfig {
         config.addDataSourceProperty("user", userName);
         config.addDataSourceProperty("password", userPass);
         config.setMaximumPoolSize(maximumPoolSize);
+
+        log.debug("Servername: {}, databaseName: {}, url: {}", serverName, dbName, url);
     }
 
     private void configureWithEnvVars(HikariConfig config) {
