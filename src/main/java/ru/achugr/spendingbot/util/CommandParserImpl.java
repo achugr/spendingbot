@@ -50,10 +50,11 @@ public class CommandParserImpl implements CommandParser {
 
         Command.CommandType commandType = Command.getType(m.group(1));
 
-        return buildCommand(Optional.of(m.group(2)), commandType);
+        return buildCommand(Optional.ofNullable(m.group(2)), commandType);
     }
 
     private Command buildCommand(Optional<String> argLine, Command.CommandType commandType) {
+        log.debug(String.format("Command type: %s, args: %s", commandType, argLine));
         Optional<List<String>> args = Optional.empty();
         if (argLine.isPresent()) {
             args = Optional.of(Arrays.asList(argLine.get().trim().split("\\s")));
