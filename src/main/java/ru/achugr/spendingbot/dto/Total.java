@@ -19,7 +19,7 @@ public class Total {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Total sum: %s", totalSum));
+        sb.append(String.format("Total sum: %s", totalSum != null ? totalSum : 0));
         totalEntries.forEach(e -> sb.append("\n").append(e.toString()));
         return sb.toString();
     }

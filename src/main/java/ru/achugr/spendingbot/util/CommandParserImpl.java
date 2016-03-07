@@ -85,8 +85,8 @@ public class CommandParserImpl implements CommandParser {
             try {
                 BigDecimal sum = new BigDecimal(args.get().get(0));
 
-                if (sum.compareTo(BigDecimal.valueOf(1000000000000L)) > 0) {
-                    return new ErrorCommand("Sum is to big");
+                if (sum.abs().compareTo(BigDecimal.valueOf(1000000000000L)) > 0) {
+                    return new ErrorCommand("Sum is too big");
                 }
                 return new PaidCommand(new BigDecimal(args.get().get(0)));
             } catch (NumberFormatException e) {
